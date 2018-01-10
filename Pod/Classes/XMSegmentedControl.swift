@@ -39,6 +39,7 @@ public enum XMContentType {
     case text
     case icon
     case hybrid
+    case view
     case hybridVertical
 }
 
@@ -112,6 +113,18 @@ open class XMSegmentedControl: UIView {
     }
 
     /**
+     Sets the segmented control content type to `View` and uses the content of the array to create the segments.
+     - Note: Only six elements will be displayed.
+     */
+    open var segmentViews: [UIView] = [] {
+        didSet {
+            segmentViews = segmentViews.count > 6 ? Array(segmentViews[0..<6]) : segmentViews
+            contentType = .view
+            self.update()
+        }
+    }
+
+    /**
      Sets the segmented control content type to `Hybrid` (i.e. displaying icons and text) and uses the content of the tuple to create the segments.
      - Note: Only six elements will be displayed.
      */
@@ -162,7 +175,7 @@ open class XMSegmentedControl: UIView {
             }
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: UIViewAnimationOptions.curveEaseOut, animations: {
                 switch(self.contentType) {
-                case .icon, .hybrid, .hybridVertical:
+                case .icon, .hybrid, .view, .hybridVertical:
                     ((self.subviews.filter(isUIButton)) as! [UIButton]).forEach {
                         if $0.tag == self.selectedSegment {
                             $0.tintColor = self.highlightTint
@@ -287,6 +300,9 @@ open class XMSegmentedControl: UIView {
                     tab.setTitle(segmentTitle[i], for: UIControlState())
                     tab.setTitleColor(i == selectedSegment ? highlightTint : tint, for: UIControlState())
                     tab.titleLabel?.font = font
+                case .view:
+                    segmentViews[i].center = CGPoint(x: width / 2, y: height / 2)
+                    tab.addSubview(segmentViews[i])
                 case .hybrid:
                     let insetAmount: CGFloat = 8 / 2.0
                     tab.imageEdgeInsets = UIEdgeInsetsMake(12, -insetAmount, 12, insetAmount)
@@ -393,6 +409,11 @@ open class XMSegmentedControl: UIView {
             let positionWidth = startingPositionAndWidth(totalWidth, distribution: itemWidthDistribution, segmentCount: tabBarSections)
             addHighlightView(startingPosition: CGFloat(selectedSegment) * positionWidth.sectionWidth, width: positionWidth.sectionWidth)
             addSegments(startingPosition: positionWidth.startingPosition, sections: tabBarSections, width: positionWidth.sectionWidth, height: self.frame.height)
+        } else if contentType == .view {
+            let tabBarSections = segmentViews.count
+            let sectionWidth = totalWidth / CGFloat(tabBarSections)
+            addHighlightView(startingPosition: CGFloat(selectedSegment) * sectionWidth, width: sectionWidth)
+            addSegments(startingPosition: 0, sections: tabBarSections, width: sectionWidth, height: frame.height)
         }
     }
 
