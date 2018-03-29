@@ -319,8 +319,8 @@ open class XMSegmentedControl: UIView {
                     let imageSize = image.size
                     let text: String = segmentContent.text[i]
 
-                    let halfSizeFont = UIFont(name: font.fontName, size: font.pointSize / 2.0)
-                    let textSize = NSString(string: text).size(attributes: [NSFontAttributeName: halfSizeFont])
+                    let halfSizeFont = font.withSize(font.pointSize / 2.0)
+                    let textSize = NSString(string: text).size(withAttributes: [NSAttributedStringKey.font: halfSizeFont])
 
                     let spacing: CGFloat = 12
                     let imageHorizontalInset: CGFloat = (width - imageSize.width)/2
