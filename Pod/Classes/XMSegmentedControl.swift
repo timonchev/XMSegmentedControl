@@ -142,6 +142,15 @@ open class XMSegmentedControl: UIView {
     }
 
     /**
+     Sets title insets for each tab
+     */
+    open var titleEdgeInsets: UIEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0) {
+        didSet {
+            self.update()
+        }
+    }
+
+    /**
      Sets the segmented control content type to `HybridVertical` (i.e. displaying icons and text in vertical arrangement) and uses the content of the tuple to create the segments.
      - Note: Only six elements will be displayed.
      */
@@ -287,6 +296,9 @@ open class XMSegmentedControl: UIView {
                     tab.setTitle(segmentTitle[i], for: UIControlState())
                     tab.setTitleColor(i == selectedSegment ? highlightTint : tint, for: UIControlState())
                     tab.titleLabel?.font = font
+                    tab.titleLabel?.numberOfLines = 0
+                    tab.titleLabel?.textAlignment = .center
+                    tab.titleEdgeInsets = titleEdgeInsets
                 case .hybrid:
                     let insetAmount: CGFloat = 8 / 2.0
                     tab.imageEdgeInsets = UIEdgeInsetsMake(12, -insetAmount, 12, insetAmount)
@@ -304,7 +316,7 @@ open class XMSegmentedControl: UIView {
                     let text: String = segmentContent.text[i]
 
                     let halfSizeFont = UIFont(name: font.fontName, size: font.pointSize / 2.0)
-                    let textSize = NSString(string: text).size(attributes: [NSFontAttributeName: halfSizeFont])
+                    let textSize = NSString(string: text).size(withAttributes: [NSAttributedStringKey.font: halfSizeFont])
 
                     let spacing: CGFloat = 12
                     let imageHorizontalInset: CGFloat = (width - imageSize.width)/2
